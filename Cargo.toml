@@ -1,0 +1,9 @@
+[package]
+name = "td4emu"
+version = "0.1.0"
+authors = ["shotamishima <smshima2@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
