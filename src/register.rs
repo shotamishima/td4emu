@@ -2,12 +2,12 @@ pub struct Register {
     pub register_a: u8, // register a
     pub register_b: u8, // register b
     pub carry_flag: u8, // carry flag
-    pub pc: u8; // program counter
+    pub pc: u8,         // program counter
 }
 
 impl Register {
     // initialization
-    pub fn new() -> Self { 
+    pub fn new() -> Self {
         Self {
             register_a: 0,
             register_b: 0,
@@ -47,9 +47,4 @@ impl Register {
     pub fn set_register_b(&mut self, new_value: u8) {
         self.register_b = new_value;
     }
-
-
-
-
-
 }
