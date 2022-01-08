@@ -1,13 +1,15 @@
 use crate::error::EmulatorErr;
 use crate::op::Opcode;
-use num_traits::FromPrimitive;
-use std::cell::RefCell;
+use crate::port::Port;
 use crate::register::Register;
 use crate::rom::Rom;
+use num_traits::FromPrimitive;
+use std::cell::RefCell;
 
 pub struct CpuEmulator {
     register: RefCell<Register>,
     rom: RefCell<Rom>,
+    port: RefCell<Port>,
 }
 
 type ImData = u8;
@@ -16,7 +18,8 @@ impl CpuEmulator {
     pub fn new() -> Self {
         Self {
             register: RefCell::new(Register::new()),
-            rom: RefCell::new(Rom::new())
+            rom: RefCell::new(Rom::new()),
+            port: RefCell::new(Port::new()),
         }
     }
 

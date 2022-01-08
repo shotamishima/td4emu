@@ -22,7 +22,6 @@ impl Register {
 
     pub fn set_pc(&mut self, new_value: u8) {
         self.pc = new_value;
-
     }
 
     pub fn incr_pc(&mut self) {
@@ -96,5 +95,3 @@ mod tests {
         assert_eq!(register.pc(), 2);
     }
 }
-
-
