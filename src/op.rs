@@ -1,7 +1,7 @@
 use num_derive::FromPrimitive;
 
-#[derive(FromePrimitive)]
-pub enum Opecode {
+#[derive(Debug, PartialEq, FromPrimitive)]
+pub enum Opcode {
     AddA = 0b0000,
     AddB = 0b0101,
     MovA = 0b0011,

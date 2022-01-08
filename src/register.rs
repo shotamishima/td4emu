@@ -20,6 +20,11 @@ impl Register {
         self.pc
     }
 
+    pub fn set_pc(&mut self, new_value: u8) {
+        self.pc = new_value;
+
+    }
+
     pub fn incr_pc(&mut self) {
         self.pc += 1;
     }
