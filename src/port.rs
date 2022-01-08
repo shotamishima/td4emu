@@ -10,4 +10,12 @@ impl Port {
             output: 0,
         }
     }
+
+    pub fn input(&self) -> u8 {
+        self.input
+    }
+
+    pub fn output(&self) -> u8 {
+        self.output
+    }
 }

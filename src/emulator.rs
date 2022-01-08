@@ -15,13 +15,7 @@ pub struct CpuEmulator {
 type ImData = u8;
 
 impl CpuEmulator {
-    pub fn new() -> Self {
-        Self {
-            register: RefCell::new(Register::new()),
-            rom: RefCell::new(Rom::new()),
-            port: RefCell::new(Port::new()),
-        }
-    }
+    // register, rom, portの指定なしにオブジェクトを生成することはないのでnew関数を削除
 
     pub fn with(register: Register, port: Port, rom: Rom) -> Self {
         Self {
@@ -72,7 +66,7 @@ impl CpuEmulator {
 
         match opcode {
             Opcode::MovA => Ok(self.mov_a(im)),
-            Opcode::MovB -> Ok(self.mov_b(im)),
+            Opcode::MovB => Ok(self.mov_b(im)),
             _ => unimplemented!(), // TODO
         }
     }
@@ -92,5 +86,30 @@ impl CpuEmulator {
 
 #[cfg(test)]
 mod tests {
-    // TODO
+    use crate::emulator::CpuEmulator;
+    use crate::port::Port;
+    use crate::register::Register;
+    use crate::rom::Rom;
+
+    #[test]
+    fn test_mov_a() {
+        let rom = Rom::new(vec![0b00110001]);
+        let register = Register::new();
+        let port = Port::new();
+        let emu = CpuEmulator::with(register, port, rom);
+        let proceeded = emu.proceed();
+
+        assert!(proceeded.is_ok());
+        assert_eq!(emu.register.borrow().register_a(), 1);
+        assert_eq!(emu.register.borrow().register_b(), 0);
+        assert_eq!(emu.register.borrow().pc(), 1);
+        assert_eq!(emu.register.borrow().carry_flag(), 0);
+        assert_eq!(emu.port.borrow().input(), 0);
+        assert_eq!(emu.port.borrow().output(), 0);
+
+
+    }
+
+
+
 }
