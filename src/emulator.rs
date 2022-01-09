@@ -4,8 +4,8 @@ use crate::port::Port;
 use crate::register::Register;
 use crate::rom::Rom;
 use num_traits::FromPrimitive;
-use std::cell::RefCell;
 use std::borrow::Borrow;
+use std::cell::RefCell;
 
 pub struct CpuEmulator {
     register: RefCell<Register>,
@@ -81,7 +81,7 @@ impl CpuEmulator {
         self.register.borrow_mut().set_register_a(im);
         self.register.borrow_mut().set_carry_flag(0);
     }
-    
+
     fn mov_b(&self, im: u8) {
         self.register.borrow_mut().set_register_b(im);
         self.register.borrow_mut().set_carry_flag(0);
