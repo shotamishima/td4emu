@@ -4,11 +4,8 @@ pub struct Port {
 }
 
 impl Port {
-    pub fn new() -> Self {
-        Self {
-            input: 0,
-            output: 0,
-        }
+    pub fn new(input: u8, output: u8) -> Self {
+        Self { input, output }
     }
 
     pub fn input(&self) -> u8 {
