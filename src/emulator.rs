@@ -279,8 +279,6 @@ mod cpu_tests {
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 1);
-        assert_eq!(emu.register.borrow().register_b(), 0);
-        assert_eq!(emu.register.borrow().pc(), 1);
         assert_eq!(emu.register.borrow().carry_flag(), 0);
     }
 
@@ -293,9 +291,34 @@ mod cpu_tests {
         let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
-        assert_eq!(emu.register.borrow().register_a(), 0);
         assert_eq!(emu.register.borrow().register_b(), 3);
-        assert_eq!(emu.register.borrow().pc(), 1);
+        assert_eq!(emu.register.borrow().carry_flag(), 0);
+    }
+
+    #[test]
+    fn test_port_out_b() {
+        let rom = Rom::new(vec![0b10010000]);
+        let mut register = Register::new();
+        register.set_register_b(0b0011);
+        let port = Port::new(0b0000, 0b0000);
+        let emu = CpuEmulator::with(register, port, rom);
+        let proceeded = emu.exec();
+
+        assert!(proceeded.is_ok());
+        assert_eq!(emu.port.borrow().output(), 0b0011);
+        assert_eq!(emu.register.borrow().carry_flag(), 0);
+    }
+
+    #[test]
+    fn test_port_out_im() {
+        let rom = Rom::new(vec![0b10110011]);
+        let register = Register::new();
+        let port = Port::new(0b0000, 0b0000);
+        let emu = CpuEmulator::with(register, port, rom);
+        let proceeded = emu.exec();
+
+        assert!(proceeded.is_ok());
+        assert_eq!(emu.port.borrow().output(), 0b0011);
         assert_eq!(emu.register.borrow().carry_flag(), 0);
     }
 }
