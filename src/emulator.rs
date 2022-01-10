@@ -54,7 +54,7 @@ impl CpuEmulator {
                 | Opcode::Jmp
                 | Opcode::Jnc
                 | Opcode::OutIm => Ok((opcode, im)),
-                | Opcode::InA | Opcode::InB | Opcode::OutB => Ok((opcode, 0)), // imidiate data is always 0
+                Opcode::InA | Opcode::InB | Opcode::OutB => Ok((opcode, 0)), // imidiate data is always 0
             }
         } else {
             // never come
@@ -75,7 +75,10 @@ impl CpuEmulator {
             Opcode::MovB2A => Ok(self.mov_b2a()),
             Opcode::Jmp => Ok(self.jmp(im)),
             Opcode::Jnc => Ok(self.jnc(im)),
-            _ => unimplemented!(), // TODO
+            Opcode::InA => Ok(self.in_a()),
+            Opcode::InB => Ok(self.in_b()),
+            Opcode::OutB => Ok(self.out_b()),
+            Opcode::OutIm => Ok(self.out_im(im)),
         }
     }
 
@@ -102,7 +105,7 @@ impl CpuEmulator {
         self.register.borrow_mut().set_register_b(register_a);
         self.register.borrow_mut().set_carry_flag(0);
     }
-    
+
     fn add_a(&self, im: u8) {
         let existence = self.register.borrow().register_a();
         let new_value = existence + im;
@@ -123,6 +126,29 @@ impl CpuEmulator {
         }
 
         self.register.borrow_mut().set_register_b(new_value & 0x0f);
+    }
+
+    fn in_a(&self) {
+        let input_port = self.port.borrow().input();
+        self.register.borrow_mut().set_register_a(input_port);
+        self.register.borrow_mut().set_carry_flag(0);
+    }
+
+    fn in_b(&self) {
+        let input_port = self.port.borrow().input();
+        self.register.borrow_mut().set_register_b(input_port);
+        self.register.borrow_mut().set_carry_flag(0);
+    }
+
+    fn out_im(&self, im: u8) {
+        self.port.borrow_mut().set_output(im);
+        self.register.borrow_mut().set_carry_flag(0);
+    }
+
+    fn out_b(&self) {
+        let register_b = self.register.borrow().register_b();
+        self.port.borrow_mut().set_output(register_b);
+        self.register.borrow_mut().set_carry_flag(0);
     }
 
     fn jmp(&self, im: u8) {
@@ -244,12 +270,11 @@ mod cpu_tests {
         assert_eq!(emu.register.borrow().pc(), 1);
         assert_eq!(emu.register.borrow().carry_flag(), 0);
     }
-
 }
 
 #[cfg(test)]
 mod cpu_integration_tests {
-    use crate:: emulator::CpuEmulator;
+    use crate::emulator::CpuEmulator;
     use crate::port::Port;
     use crate::register::Register;
     use crate::rom::Rom;
@@ -275,23 +300,22 @@ mod cpu_integration_tests {
         // 0: MOV A, 0010
         // 1: ADD A, 0011
         // 2: JMP 0001
-       let rom = Rom::new(vec![0b00110010, 0b00000011, 0b11110001]);
-       let rom_size = rom.size();
-       let register = Register::new();
-       let port = Port::new(0b0000, 0b0000);
-       let emu = CpuEmulator::with(register, port, rom);
+        let rom = Rom::new(vec![0b00110010, 0b00000011, 0b11110001]);
+        let rom_size = rom.size();
+        let register = Register::new();
+        let port = Port::new(0b0000, 0b0000);
+        let emu = CpuEmulator::with(register, port, rom);
 
-       for _ in 0..rom_size {
-           emu.exec().unwrap();
-       }
+        for _ in 0..rom_size {
+            emu.exec().unwrap();
+        }
 
-       assert_eq!(emu.register.borrow().pc(), 0b0001);
-       assert_eq!(emu.register.borrow().carry_flag(), 0b0000);
-       assert_eq!(emu.register.borrow().register_a(), 5);
+        assert_eq!(emu.register.borrow().pc(), 0b0001);
+        assert_eq!(emu.register.borrow().carry_flag(), 0b0000);
+        assert_eq!(emu.register.borrow().register_a(), 5);
 
-       emu.exec().unwrap();
-       assert_eq!(emu.register.borrow().register_a(), 8);
-
+        emu.exec().unwrap();
+        assert_eq!(emu.register.borrow().register_a(), 8);
     }
 
     #[test]
