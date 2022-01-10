@@ -25,7 +25,7 @@ impl CpuEmulator {
         }
     }
 
-    // fetch, decode関数はproceedからしか呼ばないのでpub -> privateに変更
+    // fetch, decode関数はexecからしか呼ばないのでpub -> privateに変更
     fn fetch(&self) -> u8 {
         let pc = self.register.borrow().pc();
         if self.rom.borrow().size() <= pc {
@@ -61,7 +61,7 @@ impl CpuEmulator {
         }
     }
 
-    pub fn proceed(&self) -> Result<(), EmulatorErr> {
+    pub fn exec(&self) -> Result<(), EmulatorErr> {
         let data = self.fetch();
         let (opcode, im) = self.decode(data)?;
 
@@ -150,7 +150,7 @@ mod cpu_tests {
         let register = Register::new();
         let port = Port::new(0b0000, 0b0000);
         let emu = CpuEmulator::with(register, port, rom);
-        let proceeded = emu.proceed();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 1);
@@ -165,7 +165,7 @@ mod cpu_tests {
         let register = Register::new();
         let port = Port::new(0b0000, 0b0000);
         let emu = CpuEmulator::with(register, port, rom);
-        let proceeded = emu.proceed();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 0);
@@ -184,7 +184,7 @@ mod cpu_tests {
 
         assert_eq!(emu.register.borrow().register_a(), 0);
 
-        let proceeded = emu.proceed();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 2);
@@ -203,7 +203,7 @@ mod cpu_tests {
 
         assert_eq!(emu.register.borrow().register_b(), 0);
 
-        let proceeded = emu.proceed();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 2);
@@ -219,7 +219,7 @@ mod cpu_tests {
         register.set_register_a(1);
         let port = Port::new(0b0000, 0b0000);
         let emu = CpuEmulator::with(register, port, rom);
-        let proceeded = emu.proceed();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 2);
@@ -235,7 +235,7 @@ mod cpu_tests {
         register.set_register_b(1);
         let port = Port::new(0b0000, 0b0000);
         let emu = CpuEmulator::with(register, port, rom);
-        let proceeded = emu.proceed();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().register_a(), 0);
@@ -262,7 +262,7 @@ mod cpu_integration_tests {
         let emu = CpuEmulator::with(register, port, rom);
 
         for _ in 0..rom_size {
-            emu.proceed().unwrap();
+            emu.exec().unwrap();
         }
 
         assert_eq!(emu.register.borrow().register_a(), 2);
