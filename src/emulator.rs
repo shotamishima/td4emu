@@ -12,8 +12,6 @@ pub struct CpuEmulator {
     port: RefCell<Port>,
 }
 
-type ImData = u8;
-
 impl CpuEmulator {
     // register, rom, portの指定なしにオブジェクトを生成することはないのでnew関数を削除
 
@@ -39,7 +37,7 @@ impl CpuEmulator {
         code
     }
 
-    fn decode(&self, data: u8) -> Result<(Opcode, ImData), EmulatorErr> {
+    fn decode(&self, data: u8) -> Result<(Opcode, u8), EmulatorErr> {
         let op = data >> 4;
         let im = data & 0x0f;
 
