@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Read};
 
 fn main() {
-    let mut f = BufReader::new(File::open("example/simple_calc.sasm")).expect("file not found");
+    let mut f = BufReader::new(File::open("example/simple_calc.sasm").expect("file not found"));
     let ops = f.lines().map(|line| line.unwrap()).collect::<Vec<String>>();
 
     let mut source = Vec::new();
