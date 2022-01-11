@@ -77,7 +77,11 @@ impl Parser {
             if op == "out" {
                 self.pos += 1;
                 let im = self.source.get(self.pos).unwrap();
-                result.push(Token::OutIm(im.to_string()));
+                if im == "B" {
+                    result.push(Token::OutB);
+                } else {
+                    result.push(Token::OutIm(im.to_string()));
+                }
             }
 
             self.pos += 1;
