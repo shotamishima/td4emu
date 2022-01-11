@@ -19,7 +19,7 @@ impl CpuEmulator {
         assert!(
             rom.size() <= 16,
             "Maximum memory size is 16. This program can't work."
-            );
+        );
         Self {
             register: RefCell::new(register),
             port: RefCell::new(port),
@@ -94,7 +94,7 @@ impl CpuEmulator {
 
     // fetchで判定するより前に判定
     fn does_halt(&self) -> bool {
-        self.register.borrow().pc() >= self.rom.borrow().size() 
+        self.register.borrow().pc() >= self.rom.borrow().size()
     }
 
     fn mov_a(&self, im: u8) {
@@ -178,8 +178,8 @@ impl CpuEmulator {
         self.register.borrow_mut().set_carry_flag(0);
     }
 
-    pub fn register(&self) -> Register {
-        self.register.borrow().clone()
+    pub fn out(&self) {
+        println!("{}", self.port.borrow().output());
     }
 }
 
@@ -296,7 +296,7 @@ mod cpu_tests {
         let register = Register::new();
         let port = Port::new(0b0000, 0b0000);
         let emu = CpuEmulator::with(register, port, rom);
-        let proceeded= emu.exec();
+        let proceeded = emu.exec();
 
         assert!(proceeded.is_ok());
         assert_eq!(emu.register.borrow().pc(), 3);
