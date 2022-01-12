@@ -1,9 +1,9 @@
+use std::fs::File;
+use std::io::{BufRead, BufReader, Read};
 use td4emu::emulator::CpuEmulator;
 use td4emu::port::Port;
 use td4emu::register::Register;
 use td4emu::rom::Rom;
-use std::fs::File;
-use std::io::{BufRead, BufReader, Read};
 
 fn main() {
     let mut f = BufReader::new(File::open("example/simple_calc.sasm").expect("file not found"));

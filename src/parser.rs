@@ -59,7 +59,7 @@ impl Parser {
                     .source
                     .get(self.pos)
                     .ok_or_else(|| EmulatorErr::new("Failed to parse add right hand side value"))?;
-                
+
                 let token = Token::Add(Register::from(lhs.to_string()), rhs.to_string());
 
                 result.push(token);
@@ -82,7 +82,7 @@ impl Parser {
                     .get(self.pos)
                     .ok_or_else(|| EmulatorErr::new("Failed to parse jnc im value"))?;
                 result.push(Token::Jnc(im.to_string()));
-            } 
+            }
 
             if op == "in" {
                 self.pos += 1;
@@ -95,7 +95,7 @@ impl Parser {
             if op == "out" {
                 self.pos += 1;
                 let im = self.source.get(self.pos).unwrap();
-                let im= self
+                let im = self
                     .source
                     .get(self.pos)
                     .ok_or_else(|| EmulatorErr::new("Failed to parse out im value"))?;
