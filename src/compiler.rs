@@ -23,7 +23,7 @@ impl Compiler {
                 Token::Jnc(im) => self.gen_bin_code(0b1110, im)?,
                 Token::In(Register::A, im) => self.gen_bin_code(0b0010, im)?,
                 Token::In(Register::B, im) => self.gen_bin_code(0b0110, im)?,
-                Token::OutB => self.gen_bin_code_with_zero_padding(0b1011),
+                Token::OutB => self.gen_bin_code_with_zero_padding(0b1001),
                 Token::OutIm(im) => self.gen_bin_code(0b1011, im)?,
             };
             result.push(program);
@@ -52,7 +52,7 @@ impl Compiler {
 mod compiler_tests {
     use crate::compiler::Compiler;
     use crate::token::Register;
-    use crate::token::Token::Mov;
+    use crate::token::Token::{Add, In, Jmp, Jnc, Mov, MovAB, MovBA, OutB, OutIm};
 
     #[test]
     fn test_compiler_mov_a() {
@@ -66,5 +66,73 @@ mod compiler_tests {
         let compiler = Compiler::new();
         let program = compiler.compile(vec![Mov(Register::B, "1".to_string())]);
         assert_eq!(program.unwrap(), vec![0b01110001]);
+    }
+
+    #[test]
+    fn test_compiler_mov_ab() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![MovAB]);
+        assert_eq!(program.unwrap(), vec![0b00010000]);
+    }
+
+    #[test]
+    fn test_conpiler_mov_ba() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![MovBA]);
+        assert_eq!(program.unwrap(), vec![0b01000000]);
+    }
+
+    #[test]
+    fn test_compiler_add_a() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![Add(Register::A, "1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b00000001]);
+    }
+
+    #[test]
+    fn test_compiler_add_b() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![Add(Register::B, "1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b01010001]);
+    }
+
+    #[test]
+    fn test_compiler_jmp() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![Jmp("1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b11110001]);
+    }
+
+    #[test]
+    fn test_compiler_jnc() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![Jnc("1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b11100001]);
+    }
+    #[test]
+    fn test_compiler_in_a() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![In(Register::A, "1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b00100001]);
+    }
+    #[test]
+    fn test_compiler_in_b() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![In(Register::B, "1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b01100001]);
+    }
+
+    #[test]
+    fn test_compiler_out_im() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![OutIm("1".to_string())]);
+        assert_eq!(program.unwrap(), vec![0b10110001]);
+    }
+
+    #[test]
+    fn test_compiler_out_b() {
+        let compiler = Compiler::new();
+        let program = compiler.compile(vec![OutB]);
+        assert_eq!(program.unwrap(), vec![0b10010000]);
     }
 }
