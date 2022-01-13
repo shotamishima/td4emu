@@ -158,12 +158,14 @@ impl CpuEmulator {
     fn out_im(&self, im: u8) {
         self.port.borrow_mut().set_output(im);
         self.register.borrow_mut().set_carry_flag(0);
+        println!("Port (B) Out: {}", self.port.borrow().output());
     }
 
     fn out_b(&self) {
         let register_b = self.register.borrow().register_b();
         self.port.borrow_mut().set_output(register_b);
         self.register.borrow_mut().set_carry_flag(0);
+        println!("Port (B) Out: {}", self.port.borrow().output());
     }
 
     fn jmp(&self, im: u8) {
@@ -176,10 +178,6 @@ impl CpuEmulator {
             self.register.borrow_mut().set_pc(im);
         }
         self.register.borrow_mut().set_carry_flag(0);
-    }
-
-    pub fn out(&self) {
-        println!("{}", self.port.borrow().output());
     }
 }
 
